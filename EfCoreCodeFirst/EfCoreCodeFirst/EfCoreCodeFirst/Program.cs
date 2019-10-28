@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using EfCoreCodeFirst.Context;
+using EfCoreCodeFirst.Helper;
 using EfCoreCodeFirst.Poco;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -13,8 +15,8 @@ namespace EfCoreCodeFirst
         static void Main(string[] args)
         {
             //InsertInto();
-            InnerJoin();
-
+            //InnerJoin();
+            SelectQuerable<Student>();
         }
 
 
@@ -80,6 +82,38 @@ namespace EfCoreCodeFirst
             //Console.WriteLine();
         }
 
+
+        public static void SelectQuerable<T>()
+        {
+            using (var context = new SchoolContext())
+            {
+
+                IQueryable<Student> resultQueryable = context.Students.Where(x => x.Id == 1);
+
+                Console.WriteLine(resultQueryable.ToSql());
+
+                /*********************/
+
+                //https://stackoverflow.com/questions/8315819/expression-lambda-and-query-generation-at-runtime-simplest-where-example/8315901#8315901
+
+
+                //IQueryable<Student> resultQueryable = context.Students.Where(item => item.Id == 1);
+
+                var item = Expression.Parameter(typeof(Student), "item");
+                var prop = Expression.Property(item, "Id");
+                var numberId = Expression.Constant(1);
+                var equal = Expression.Equal(prop, numberId);
+                Expression<Func<Student, bool>> lambda = Expression.Lambda<Func<Student, bool>>(equal, item);
+
+                IQueryable<Student> result = context.Students.Where(lambda);
+
+                Console.WriteLine(resultQueryable.ToSql());
+
+
+                var qq = result.ToList();
+
+            }
+        }
 
 
 

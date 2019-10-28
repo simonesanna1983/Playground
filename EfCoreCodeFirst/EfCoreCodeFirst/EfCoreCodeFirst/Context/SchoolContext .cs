@@ -16,9 +16,9 @@ namespace EfCoreCodeFirst.Context
             = LoggerFactory.Create(builder =>
             {
                 builder
-                    .AddFilter((category, level) =>
-                        category == DbLoggerCategory.Database.Command.Name
-                        && level == LogLevel.Information)
+                    //.AddFilter((category, level) =>
+                    //    category == DbLoggerCategory.Database.Command.Name
+                    //    && level == LogLevel.Information)
                     .AddConsole();
             });
 
